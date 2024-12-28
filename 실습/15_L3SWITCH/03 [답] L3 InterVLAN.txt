@@ -1,0 +1,443 @@
+-------------------------------------
+Ether Channel 설정
+-------------------------------------
+--------------------
+Ether 1
+--------------------
+enable
+config ter
+inter range f0/1-2 
+channel-protocol pagp
+channel-group 1 mode desirable
+exit
+interface port-channel 1 
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+
+inter range f0/3-4
+channel-protocol lacp
+channel-group 2 mode desirable
+exit
+inter port-channel 2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+--------------------
+SW1
+--------------------
+enable
+config ter
+inter range  f0/1-2 
+channel-protocol pagp
+channel-group 1 mode desirable
+exit
+interface port-channel 1 
+switchport mode trunk
+exit
+
+inter range  f0/3-4
+channel-protocol lacp
+channel-group 4 mode active
+exit
+inter port-channel 4
+switchport mode trunk
+exit
+
+--------------------
+SW2
+--------------------
+enable
+config ter
+inter range f0/1-2 
+channel-protocol lacp
+channel-group 4 mode active
+exit
+interface port-channel 4 
+switchport mode trunk
+exit
+
+inter range f0/3-4
+channel-protocol pagp
+channel-group 3 mode desirable
+exit
+inter port-channel 3
+switchport mode trunk
+exit
+--------------------
+SW3
+--------------------
+enable
+config ter
+inter range f0/1-2 
+channel-protocol pagp
+channel-group 3 mode desirable
+exit
+interface port-channel 3 
+switchport mode trunk
+exit
+
+inter range  f0/3-4
+channel-protocol lacp
+channel-group 2 mode active
+exit
+inter port-channel 2
+switchport mode trunk
+exit
+
+
+--------------------
+Ether 2
+--------------------
+enable
+config ter
+inter range f0/2-3 
+channel-protocol pagp
+channel-group 2 mode desirable
+exit
+interface port-channel 2 
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+
+inter range f0/4-5
+channel-protocol lacp
+channel-group 1 mode desirable
+exit
+inter port-channel 1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+
+--------------------
+SW4
+--------------------
+enable
+config ter
+inter range f0/1-2 
+channel-protocol pagp
+channel-group 2 mode desirable
+exit
+interface port-channel 2 
+switchport mode trunk
+exit
+
+inter range f0/3-4
+channel-protocol pagp
+channel-group 3 mode desirable
+exit
+inter port-channel 3
+switchport mode trunk
+exit
+--------------------
+SW5
+--------------------
+enable
+config ter
+inter range f0/1-2 
+channel-protocol lacp
+channel-group 1 mode active
+exit
+interface port-channel 1 
+switchport mode trunk
+exit
+
+inter range f0/3-4
+channel-protocol pagp
+channel-group 3 mode desirable
+exit
+inter port-channel 3
+switchport mode trunk
+exit
+
+-------------------------------------
+VTP 설정
+-------------------------------------
+--------------------
+Ether 1
+--------------------
+vtp domain itbank
+vtp password 1111
+vtp mode server
+vlan 10
+vlan 20
+vlan 30
+exit
+
+--------------------
+SW1
+--------------------
+vtp mode client
+vtp domain itbank
+vtp password 1111
+
+--------------------
+SW2
+--------------------
+vtp mode client
+vtp domain itbank
+vtp password 1111
+
+--------------------
+SW3
+--------------------
+vtp mode client
+vtp domain itbank
+vtp password 1111
+
+--------------------
+Ether 2
+--------------------
+vtp domain itbank
+vtp password 1111
+vtp mode server
+vlan 10
+vlan 20
+exit
+
+--------------------
+SW4
+--------------------
+vtp mode client
+vtp domain itbank
+vtp password 1111
+
+--------------------
+SW5
+--------------------
+vtp mode client
+vtp domain itbank
+vtp password 1111
+
+
+
+
+
+-------------------------------------
+VLAN Access 모드 설정
+-------------------------------------
+--------------------
+SW1
+--------------------
+inter f0/5
+sw mo ac
+sw ac vlan 10
+spanning-tree portfast
+spanning-tree bpduruard enable
+
+exit
+inter f0/6
+sw mo ac
+sw ac vlan 30
+spanning-tree portfast
+spanning-tree bpduruard enable
+--------------------
+SW2
+--------------------
+inter f0/5
+sw mo ac
+sw ac vlan 20
+spanning-tree portfast
+spanning-tree bpduruard enable
+exit
+inter f0/6
+sw mo ac
+sw ac vlan 30
+spanning-tree portfast
+spanning-tree bpduruard enable
+
+--------------------
+SW3
+--------------------
+inter f0/5
+sw mo ac
+sw ac vlan 10
+spanning-tree portfast
+spanning-tree bpduruard enable
+exit
+inter f0/6
+sw mo ac
+sw ac vlan 20
+spanning-tree portfast
+spanning-tree bpduruard enable
+
+--------------------
+SW4
+--------------------
+inter f0/6
+sw mo ac
+sw ac vlan 20
+spanning-tree portfast
+spanning-tree bpduruard enable
+ex
+inter f0/5
+sw mo ac
+sw ac vlan 10
+spanning-tree portfast
+spanning-tree bpduruard enable
+exit
+
+
+--------------------
+SW5
+--------------------
+inter f0/5
+sw mo ac
+sw ac vlan 10
+spanning-tree portfast
+spanning-tree bpduruard enable
+exit
+
+inter f0/6
+sw mo ac 
+sw ac vlan 20
+spanning-tree portfast
+spanning-tree bpduruard enable
+
+
+
+-------------------------------------
+PVST BLOCKING설정
+-------------------------------------
+--------------------
+Ether 1
+--------------------
+spanning-tree vlan 10 priority 40960
+spanning-tree vlan 20 priority 0
+spanning-tree vlan 30 priority 40960
+--------------------
+SW1
+--------------------
+spanning-tree vlan 10 priority 0
+spanning-tree vlan 20 priority 40960
+
+--------------------
+SW3
+--------------------
+spanning-tree vlan 30 priority 0
+
+
+--------------------
+Ether 2
+--------------------
+spanning-tree vlan 10 priority 0
+
+--------------------
+SW4
+--------------------
+spanning-tree vlan 10 priority 40960
+spanning-tree vlan 20 pritority 0
+
+--------------------
+SW5
+--------------------
+spanning-tree vlan 20 priority 40960
+
+
+
+
+-------------------------------------
+InterVlan  
+-------------------------------------
+--------------------
+Ether 1
+--------------------
+ip routing
+inter vlan 10
+ip add 192.168.10.254 255.255.255.0
+no sh
+exit
+inter vlan 20
+ip add 192.168.20.254 255.255.255.0
+no sh
+ex
+inter vlan 30
+ip add 192.168.30.254 255.255.255.0
+no sh
+ex
+--------------------
+Ether 2
+--------------------
+ip routing
+inter vlan 10
+ip add 192.168.40.254 255.255.255.0
+no sh
+ex
+inter vlan 20
+ip add 192.168.50.254 255.255.255.0
+no sh
+ 
+
+-------------------------------------
+라우팅  
+-------------------------------------
+--------------------
+Ether 2
+--------------------
+inter f0/5
+no switchport 
+ip add 10.10.10.1 255.255.255.0
+no sh
+ex
+router ei 100
+net 192.168.10.0
+net 192.168.20.0
+net 192.168.30.0
+net 10.10.10.0 
+no au
+
+--------------------
+R1
+--------------------
+enable
+config ter
+inter f0/0
+ip add 10.10.10.2 255.255.255.0
+no sh
+ex
+inter f0/1
+ip add 20.10.10.2 255.255.255.0
+no sh
+ex
+router ei 100
+net 10.10.10.0
+net 20.10.10.0
+no au
+
+--------------------
+Ether 2
+--------------------
+inter f0/1
+no switchport
+ip add 20.10.10.1 255.255.255.0
+no sh
+ex
+router ei 100
+net 192.168.40.0
+net 1921.68.50.0
+net 20.10.10.0
+no au
+ex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

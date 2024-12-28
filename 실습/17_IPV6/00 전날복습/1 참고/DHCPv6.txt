@@ -1,0 +1,97 @@
+-------------------------------
+dhcp v6 - GNS
+-------------------------------
+------
+Router
+------
+
+Router : cisco 7200
+
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool itbank
+[GNS3]  : address prefix 2a00::/59 
+[packet] : prefix-delegation pool 2002::/64)
+exit
+interface f0/0
+no sh
+ipv6 enable
+ipv6 address 2a00::1/59
+ipv6 dhcp server itbank
+ipv6 nd managed-config-flag
+no sh
+exit
+exit
+copy run startup-config
+
+
+----정리 R1 ok  완료----
+enable
+config ter
+ipv6 unicast-routing
+ipv6 cef
+ipv6 local pool itbank 2002::/64 64
+ipv6 dhcp pool itbank
+prefix-delegation pool itbank
+dns-server 1001::1
+exit
+inter f0/0
+ipv6 enable
+ipv6 address 2002::1/64
+ipv6 dhcp server itbank
+no sh
+
+
+
+------
+Client
+-------
+ip auto (GNS)
+
+
+
+
+-------------------------------
+ipv6 stateless autoconfiguration - Packet Tracer  --OK
+-------------------------------
+Router 1841
+
+----
+Router(OK)
+-----
+enable
+config ter
+ipv6 unicast-routing
+int f0/0
+ipv6 enable
+ipv6 address autoconfig
+ipv6 address 1001::1/64 eui-64
+no sh
+exit
+exit
+
+----
+PC 
+----
+Autoconfig 모드 전환 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

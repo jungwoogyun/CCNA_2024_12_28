@@ -1,0 +1,69 @@
+IANA : 국제 인터넷 표준화 기구
+
+사설 IP
+A Class : 10.0.0.0/8
+B Class : 172.16.0.0/16
+C Class : 192.168.0.0/24
+
+공인 IP
+나머지 네트워크 주소
+
+** NAT (Network Address Translation)
+사설 IP 주소를 공인 IP 주소로 변환시키는 기술.
+보안성 : 사설 IP 주소를 감춰준다.
+절약 : IP 주소를 절약해준다.
+
+DNAT (Dynamic NAT)
+host 용 NAT
+공인 IP 주소로 나갈 수는 있으나,
+상대방은 공인 IP 주소로 들어오지 못한다.
+
+SNAT (Static NAT)
+Server 용 NAT
+공인 IP 주소로 나가고 들어온다.
+
+
+[명령어-router에적용]
+
+-DNAT-
+ip nat pool itbank 공인IP 공인IP netmask 서브넷마스크
+access-list 10 permit 네트워크IP 와일드카드마스크
+ip nat inside source list 10 pool itbank
+
+-SNAT-
+ip nat inside source static 사설IP 공인IP 
+
+
+-PAT-
+ip nat pool itbank 공인IP 공인IP netmask 서브넷마스크
+access-list 10 permit 네트워크IP 와일드카드마스크
+ip nat inside source list 10 pool itbank overload
+
+[명령어-router에적용]
+inter f0/0	-- 사설IP interface
+ip nat inside
+
+inter s0/0	-- 공인 IP interface
+ip nat outside
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

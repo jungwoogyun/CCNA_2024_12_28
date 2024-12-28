@@ -1,0 +1,75 @@
+-----------
+R1
+-----------
+enable
+config ter
+license boot module c2900 technology-package securityk9
+yes
+end
+write
+reload
+
+
+
+ACL 설정
+access-list 100 permit gre host 1.1.12.1 host 1.1.23.3
+access-list 100 permit gre 192.168.10.0 0.0.0.255 host 1.1.23.3
+
+Crypto 정책 설정
+crypto isakmp policy 10  - 정책 식별 번호
+authentication pre-share - 인증방식
+encryption 3des - 대칭키 알고리즘
+hash md5 - hash 알고리즘
+
+crypto isakmp key 1234 address 1.1.23.3
+crypto ipsec transform-set test esp-3des esp-md5-hmac - 정책 식별 이름 IPSec암호화 알고리즘 인증 알고리즘 
+ 
+Crypto map 설정
+crypto map vpn-map 10 ipsec-isakmp
+match address 100
+set peer 1.1.23.3
+set transform-set test
+
+inter s1/0
+crypto map vpn-map
+
+show crypto ipsec transform-set
+
+show crypto isakmp sa
+-----------
+R3
+-----------
+
+enable
+config ter
+license boot module c2900 technology-package securityk9
+yes
+end
+write
+reload
+
+ACL 설정
+access-list 100 permit gre host 1.1.23.3 host 1.1.12.1
+access-list 100 permit gre 172.16.0.0 0.0.255.255 host 1.1.12.1
+
+Crypto 정책 설정
+crypto isakmp policy 10  - 정책 식별 번호
+authentication pre-share - 인증방식
+encryption 3des - 대칭키 알고리즘
+hash md5 - hash 알고리즘
+
+crypto isakmp key 1234 address 1.1.12.1
+crypto ipsec transform-set test esp-3des esp-md5-hmac - 정책 식별 이름 IPSec암호화 알고리즘 인증 알고리즘 
+ 
+Crypto map 설정
+crypto map vpn-map 10 ipsec-isakmp
+match address 100
+set peer 1.1.12.1
+set transform-set test
+
+inter s1/1
+crypto map vpn-map
+
+show crypto ipsec transform-set
+
+show crypto isakmp sa

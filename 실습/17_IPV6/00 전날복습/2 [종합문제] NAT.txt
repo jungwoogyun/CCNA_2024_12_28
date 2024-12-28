@@ -1,0 +1,338 @@
+------------------------
+1. Vlan 설정
+------------------------
+-SWitch2-
+enable
+config ter
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+ex
+inter f0/3
+sw ac vlan 10
+inter f0/4
+sw 
+inter f0/2
+sw mo tr
+inter f0/1
+sw mo tr
+
+-Switch3-
+enable
+config ter
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+inter f0/4
+sw ac vlan 30
+inter f0/5
+sw ac vlan 40
+inter f0/3
+sw mo tr
+inter f0/2
+sw mo tr
+ex
+
+
+-Switch4-
+enable
+config ter
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+ex
+inter f0/4
+sw ac vlan 10
+inter f0/5
+sw ac vlan 20
+inter f0/2
+sw mo tr
+inter f0/3
+sw mo tr
+ex
+
+-Switch5-
+enable
+config ter
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+inter f0/3
+sw ac vlan 30
+inter f0/4
+sw ac vlan 40
+ex
+inter f0/2
+sw mo tr
+inter f0/1
+sw mo tr
+
+-Switch0-
+enable
+config ter
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+ex
+inter f0/6
+sw vlan 10
+inter f0/3
+sw mo tr
+inter f0/4
+sw mo tr
+inter f0/5
+sw mo tr
+inter f0/2
+sw mo tr
+
+-Switch1-
+enable
+config ter
+vlan 10
+vlan 20
+vlan 30
+vlan 40
+inter f0/6
+sw ac vlan 40
+inter f0/4
+sw mo tr
+inter f0/3
+sw mo tr
+inter f0/5
+sw mo tr
+
+
+------------------------
+Inter Vlan 설정
+------------------------
+
+R1
+
+enable
+config ter
+inter f1/0
+no sh
+ex
+inter f1/0.10
+en dot1 10
+ip add 192.168.10.254 255.255.255.0
+
+inter f1/0.20
+en dot1 20
+ip add 192.168.20.254 255.255.255.0
+
+inter f1/0.30
+en dot1 30
+ip add 192.168.30.254 255.255.255.0
+
+inter f1/0.40
+en dot1 40
+ip add 192.168.40.254 255.255.255.0
+
+
+
+------------------------
+STP 
+------------------------
+-Switch1-
+
+enable
+config ter
+spanning-tree vlan 1 priority 0
+spanning-tree vlan 10 priority 0
+spanning-tree vlan 20 priority 0
+spanning-tree vlan 30 priority 0
+spanning-tree vlan 40 priority 0
+
+-Switch4-
+enable
+config ter
+spanning-tree vlan 1 priority 40960
+spanning-tree vlan 10 priority 40960
+spanning-tree vlan 20 priority 40960
+spanning-tree vlan 30 priority 40960
+spanning-tree vlan 40 priority 40960
+
+-Switch2-
+enable
+config ter
+spanning-tree vlan 1 priority 40960
+spanning-tree vlan 10 priority 40960
+spanning-tree vlan 20 priority 40960
+spanning-tree vlan 30 priority 40960
+spanning-tree vlan 40 priority 40960
+
+
+------------------------
+DHCP
+------------------------
+-R1-
+enable
+config ter
+ip dhcp pool VLAN10
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.254
+dns-server 192.168.40.1
+exit
+
+ip dhcp pool VLAN20
+network 192.168.20.0 255.255.255.0
+default-router 192.168.20.254
+dns-server 192.168.40.1
+exit
+
+ip dhcp pool VLAN30
+network 192.168.30.0 255.255.255.0
+default-router 192.168.30.254
+dns-server 192.168.40.1
+exit
+
+ip dhcp pool VLAN40
+network 192.168.40.0 255.255.255.0
+default-router 192.168.40.254
+dns-server 192.168.40.1
+exit
+
+ip dhcp excluded-address 192.168.10.100
+ip dhcp excluded-address 192.168.40.1
+ip dhcp excluded-address 192.168.10.254
+ip dhcp excluded-address 192.168.20.254
+ip dhcp excluded-address 192.168.30.254
+ip dhcp excluded-address 192.168.40.254
+
+
+-R6-
+enable
+config ter
+ip dhcp pool DHCP 
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.254
+dns-server 1.1.14.60
+exit
+ip dhcp excluded-address 192.168.10.254
+
+
+------------------------
+Routing
+------------------------
+
+-R1-
+
+enable
+config ter
+router ei 100
+net 1.1.12.0
+net 1.1.14.0
+no au
+ex
+ip route 0.0.0.0 0.0.0.0 1.1.14.4
+
+-R2-
+
+enable
+config ter
+router ei 100
+net 1.1.12.0
+net 1.1.23.0
+no au
+ex
+ip route 0.0.0.0 0.0.0.0 1.1.23.3
+
+-R4-
+
+enable
+config ter
+router ei 100
+net 1.1.14.0
+net 1.1.34.0
+no au
+ex
+ip route 0.0.0.0 0.0.0.0 1.1.34.3
+ex
+
+
+-R3-
+enable
+config ter
+router ei 100
+net 1.1.23.0
+net 1.1.34.0
+no au
+ex
+ip route 0.0.0.0 0.0.0.0 1.1.36.6
+
+-R6-
+enable
+config ter
+ip route 0.0.0.0 0.0.0.0 1.1.36.3
+
+
+------------------------
+NAT
+------------------------
+-R2-
+enable
+config ter
+ip nat inside source static 172.16.0.1 1.1.23.100
+ip nat inside source static 172.16.0.2 1.1.23.200
+inter f0/0
+ip nat inside
+inter s0/0
+ip nat outside
+inter s0/1
+ip nat outside
+
+-R1-
+enable
+config ter
+access-list 10 permit 192.168.10.0 0.0.0.255
+access-list 20 permit 192.168.20.0 0.0.0.255
+access-list 30 permit 192.168.30.0 0.0.0.255
+access-list 40 permit 192.168.40.0 0.0.0.255
+ip nat pool VLAN10 1.1.12.100 1.1.12.100 netmask 255.255.255.0
+ip nat pool VLAN20 1.1.14.100 1.1.14.100 netmask 255.255.255.0
+ip nat pool VLAN30 1.1.12.200 1.1.12.200 netmask 255.255.255.0
+ip nat pool VLAN40 1.1.14.200 1.1.14.200 netmask 255.255.255.0
+ip nat inside source list 10 pool VLAN10 
+ip nat inside source list 20 pool VLAN20 overload
+ip nat inside source list 30 pool VLAN30
+ip nat inside source list 40 pool VLAN40 overload
+inter f1/0.10
+ip nat inside
+inter f1/0.20
+ip nat inside
+inter f1/0.30
+ip nat inside
+inter f1/0.40
+ip nat inside
+inter s0/0
+ip nat outside
+inter s0/1
+ip nat outside
+
+
+-R6-
+enable
+config ter
+access-list 10 permit 192.168.10.0 0.0.0.255
+ip nat pool DNAT 1.1.36.100 1.1.36.100 netmask 255.255.25.50
+ip nat inside source list 10 pool DNAT 
+inter f0/0
+ip nat inside
+inter s0/0
+ip nat outside
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+포트 번호(4계층)
+FTP : 21, 20
+Telnet : 23
+SSH : 22
+HTTP(WEB) : 80
+DNS : 53
+SMTP : 25
+--------------------------------------------------------------------
+Extended ACL(확장형 ACL)
+출발지 IP 주소, 목적지 IP 주소, 프로토콜(포트 번호) 검사
+list 번호 : 100 ~ 199, 2000 ~ 2699
+
+access-list 100 deny tcp host 192.168.10.1 host 192.168.20.1  eq 21
+access-list 100 permit ip any any (나머지 허용)
+access-list 100 deny ip any any (묵시적 거부)
+
+int fa0/0
+ip access-group 100 out

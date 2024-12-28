@@ -1,0 +1,49 @@
+** VLAN(Virtual LAN)
+브로드캐스트 구간을 나눠주는 기술.
+
+- 할당 가능한 VLAN ID
+1 : Gobal Native VLAN
+2 ~ 1001 : Ethernet 환경
+1002 ~ 1005 : FDDI, Token-Ring 환경
+1006 ~ 4094 : 확장형 Ethernet 환경
+
+- 컴퓨터와 접근된 포트
+switchport mode access
+switchport access vlan ?
+
+- 스위치와 스위치 사이 포트
+switchport trunk encapsulation dot1q (3600 버전 이상만)
+switchport mode trunk
+
+- VLAN DB에 VLAN 추가 하는 법
+(config)# vlan ?
+
+- VLAN 정보 확인
+# show vlan (패킷 트레이서)
+# show vlan-switch (실제 장비 혹은 GNS3)
+
+- TRUNK 모드 확인
+# show interface trunk
+
+- ARP 캐시 초기화
+컴퓨터 : cmd창 -> arp -d
+스위치 : clear mac-address-table
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

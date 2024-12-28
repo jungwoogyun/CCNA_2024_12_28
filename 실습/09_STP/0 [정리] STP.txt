@@ -1,0 +1,61 @@
+STP (Spanning-Tree Protocol)
+스위치 루핑 방지 프로토콜
+
+- Blocking Port 선출
+1> Root Switch 선출. (MAC Address 비교)
+2> RP, DP를 선출.
+3> Bridge ID (Priority : 32768 고정) = 낮은 수가 우선
+4> Brdige ID (MAC Address 비교) = 낮은 수가 우선
+
+# show spanning-tree vlan ?
+
+Root Port : Root Switch에서 제일 가까운 포트
+Designated Port : RP를 제외한 나머지 포트
+Alternated Port(Blocking Port) : 루핑 방지 포트
+
+- STP 선출 시간(일반 STP : IEEE 802.1d)
+1) 처음 스위치를 연결한 경우
+Listening(BPDU 수신) -> Learning(선출 시간) -> Forwarding(MAC 주소 등록 가능 상태) = 30초
+          15초	               15초
+2) STP 정보가 변경된 경우
+Blocking(BPDU 삭제) -> Listening(BPDU 수신) -> Learning(선출 시간) -> Forwarding(MAC 주소 등록 가능 상태) = 50초
+          20초                          15초                           15초
+
+- STP 선출 시간(Rapid-STP : IEEE 802.1w)
+(config)# spanning-tree mode rapid-pvst
+Discarding -> Learning -> Forwarding = 3초 이내
+
+※ Priority 값 변경
+(config)# spanning-tree vlan 1 priority ?
+
+- RSTP 설정
+(config)# spanning-tree mode rapid-pvst
+(config)# int fa?/? (컴퓨터 접근 포트)
+(config-if)# spanning-tree portfast
+(config-if)# spanning-tree bpduguard enable ( BPDU 포트 보호 )
+
+- PVST + (Cisco 사 전용 STP)
+(Per-VLAN Spanning-Tree)
+VLAN별 STP를 동작시키는 기술.
+(config)# spanning-tree vlan ? priority ?
+# show spanning-tree vlan ?
+
+- MSTP (Multiple STP : IEEE 802.1s)
+Instance 별로 VLAN을 묶어서 STP를 동작시키는 기술.
+
+전체(config)# spanning-tree mode mstp
+전체(config)# spanning-tree mst configuration
+전체(config-mst)# name itbank
+전체(config-mst)# revision 1
+전체(config-mst)# instance 1 vlan 1-25
+전체(config-mst)# instance 2 vlan 26-50
+
+RootSwitch(config)# spanning-tree mst 1-2 priority 0
+
+
+
+
+
+
+
+

@@ -1,0 +1,2 @@
+IPV4/IPV6 전환기술: http://www.ktword.co.kr/abbr_view.php?m_temp1=3061
+IPV4->IPV6 터널링 : https://www.youtube.com/watch?v=QhaXHiO5G3Y

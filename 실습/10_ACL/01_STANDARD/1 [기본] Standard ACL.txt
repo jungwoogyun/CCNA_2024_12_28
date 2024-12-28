@@ -1,0 +1,30 @@
+** 라우터 방화벽
+
+ACL(Access-list)
+접근 제어 리스트 : 패킷 필터링
+
+1> Standard ACL (표준형 ACL)
+출발지 IP 주소만 검사
+list 번호 : 1 ~ 99
+[Numberd ACL]
+access-list 1 deny host 192.168.10.1
+access-list 1 permit any (나머지 허용)
+access-list 1 deny any (묵시적 거부)
+단점 : 1줄을 삭제해도 전체 리스트가 삭제
+int fa0/0
+ip access-group 1 in
+
+[Named ACL]
+ip access-list ACL
+deny host 192.168.10.1
+permit any
+장점 : 1줄씩 삭제 가능
+int fa0/0
+ip access-group ACL in
+
+
+
+
+
+
+

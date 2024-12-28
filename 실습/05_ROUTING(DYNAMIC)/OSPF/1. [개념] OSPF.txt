@@ -1,0 +1,54 @@
+Dynamic Routing Protocol
+1> RIPv2
+AD(관리자 거리값) : 120
+
+2> OSPFv2(IPv4)
+Link-State Routing Protocol(링크 상태 정보)
+Metric : 10^8 / 실제대역폭(속도) = Cost
+Serial : 10^8 / 1,544,000bps =  64(Cost)
+FastEthernet : 10^8 / 100,000,000bps = 1(Cost)
+GigaEthernet : 10^8 / 1,000,000,000bps = 0.1 => 1(Cost)
+
+Multicast : 224.0.0.5(DR) & 224.0.0.6(DROther)
+AD(관리자 거리값) : 110
+변화가 있을 경우에만 정보 교환
+(수렴 시간이 빠르고, 쓸데 없는 트래픽이 적다.)
+대규모 네트워크에서 사용(Area 단위)
+
+* 동작 방식
+1> Hello Packet : Neighbor 성립
+# show ip ospf neighbor
+2> LSA(Link-State Advertise) 정보 교환
+3> LSDB(Link-State Database) 정보 저장
+# show ip ospf database
+4> SPF(Dijkstra) 알고리즘 경로 계산
+5> LSDB(Link-State Update) 정보 갱신 = SPFT(Shortest Path First Tree)
+6> Routing Table Update
+# show ip route
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

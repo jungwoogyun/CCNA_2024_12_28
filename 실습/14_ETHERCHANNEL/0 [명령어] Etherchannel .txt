@@ -1,0 +1,122 @@
+-------------------------------------------------------
+Ethernet Channel (이더 채널)
+-------------------------------------------------------
+-----------------------------
+개념
+-----------------------------
+링크(케이블) 이중화 기술.
+Failover 기능 : 대체 시스템이 존재.
+Load balancing 기능 : 부하 분산.
+
+-----------------------------
+조건
+-----------------------------
+포트 그룹핑 단위		: 2,4 포트 씩(짝수포트)
+같은 그룹내 포트들		: 연속적이어야 함
+그룹핑 포트 특성		: 모두 엑세스 포트들이거나, 트렁크 포트들이어야 함
+포트 속도 및 방식		: 100 Mbps 이상, 동일 속도 및 동일 듀플렉싱 방식이어야 함
+			  즉,  점대점(PTP) 연결, 동일 속도, 동일 전이중 듀플렉싱
+
+-----------------------------
+설정 방식 구분
+-----------------------------
+--------------
+수동 설정
+--------------
+관리자가 직접 설정
+inter rage f?/?-?
+channel-group 1 mode on
+
+------
+참고
+------
+ON Mode		: 상대 스위치와 협상없이 이더채널 멤버 포트를 모두 활성화
+		  상대 스위치도 ON 모드가 되어있어야 한다
+		  협상 프로토콜(PAGP or LACP)와는 달리 상대 스위치의 설정을
+		  확인 하지 않기 때문에 패킷손실이나 루프가 발생할 수 있어서 
+		  권장하지 않는다
+
+--------------
+자동 설정
+--------------
+------
+PAgP 
+------
+Port Aggregation Protocol
+CSICO 전용 이더채널 프로토콜
+Desirable와 Auto 모드가 있음.
+Desirable Mode 	: 무조건 PAgP 동작
+		  상대 스위치와 협상하여 이더채널 멤버 포트를 활성화 시킨다
+		  상대 스위치와의 이더채널이 제대로 동작하지 않으면 각 멤버 
+		  포트들은 일반 단일 포트로 사용된다
+
+Auto Mode	: 상대 스위치 포트가 PAgP를 사용할 경우에만 PAgP를 활성화 시킨다
+	
+8개의 포트까지 그룹핑 가능
+
+------
+LACP
+------
+Link Aggregation Control Protocol
+IEEE 표준 이더채널 프로토콜
+Active와 Passive 모드가 있음.
+Active Mode : 무조건 LACP 동작, PAgP의 desirable Mode와 동일
+Passive Mode : 상대 스위치 포트가 LACP일 경우만 LACP 동작, PAgP의 auto Mode와 동일
+16개의 포트까지 그룹핑 지원(but 16개 사용시 8개만 사용 8개는 백업)
+
+------
+참고
+------
+on/off 모드
+
+off 모드
+- default 설정
+- 옵션 따로 없음
+
+on 모드
+- 무조건 On모드(상대 Switch도 On이 필요함)
+- 상대 스위치와 협상없이 이더채널에 속한 멤버 포트를 모두 활성화
+- 스위치의 설정을 확인하지 않아 패킷 손실 및 프레임 루프 발생 위험성이 있음
+
+
+-----------------------------
+명령어
+-----------------------------
+
+--------------
+PagP
+--------------
+int range f0/a-b
+channel-protocol pagp
+channel-group [Group ID] mode [desirable/auto]
+exit
+
+int port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10
+switchport nonegotiate
+
+--------------
+LACP
+--------------
+int range f0/a-b
+channel-protocol lacp
+channel-group [Group ID] mode [active/passive]
+exit
+
+int port-channel 1
+switchport mode trunk
+switchport trunk native vlan 999
+switchport trunk allowed vlan 10
+switchport nonegotiate
+
+--------------
+확인
+--------------
+show etherchannel 		//etherchannel 설정 확인
+show etherchannel summary	//etherchannel 설정 확인(간단히)
+show etherchannel load-balance	//etherchannel 로드밸런싱 방식확인(기본 출발지 MAC주소별 부하분산)
+
+config ter
+port-channel load-balance		//etherchannel 로드밸런싱 방식 변경

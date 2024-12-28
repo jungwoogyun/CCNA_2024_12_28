@@ -1,0 +1,207 @@
+1. HSRP
+
+왼쪽 L2 스위치
+Switch#config ter
+Switch(config)#vlan 10
+Switch(config-vlan)#ex
+Switch(config)#vlan 20
+Switch(config-vlan)#inter range f0/3-4
+Switch(config-if-range)#switchport mode trunk
+Switch(config-if-range)#inter f0/1
+Switch(config-if)#switchport mode access 
+Switch(config-if)#switchport access vlan 10
+Switch(config-if)#inter f0/2
+Switch(config-if)#switchport mode acc
+Switch(config-if)#switchport access vlan 20
+
+Active 장비
+
+Switch>en
+Switch#config ter
+Switch(config)#vlan 10
+Switch(config-vlan)#exit
+Switch(config)#vlan 20
+Switch(config-vlan)#inter vlan 10
+Switch(config-if)#ip add 192.168.10.100 255.255.255.0
+Switch(config-if)#standby 1 ip 192.168.10.254
+Switch(config-if)#standby 1 priority 105
+Switch(config-if)#standby 1 preempt 
+Switch(config-if)#standby 1 track f0/2
+
+Switch(config)#inter vlan 20
+Switch(config-if)#ip add 192.168.20.100 255.255.255.0
+Switch(config-if)#standby 2 ip 192.168.20.254
+Switch(config-if)#standby 2 priority 105
+Switch(config-if)#standby 2 preempt 
+Switch(config-if)#standby 2 track f0/2
+
+Switch(config)#ip routing
+
+
+Standby 장비
+
+Switch>en
+Switch#config ter
+Switch(config)#vlan 10
+Switch(config-vlan)#vlan 20
+Switch(config-vlan)#inter vlan 10
+Switch(config-if)#ip add 192.168.10.200 255.255.255.0
+Switch(config-if)#stand
+Switch(config-if)#standby 1 ip 192.168.10.254
+Switch(config-if)#standby 1 preempt 
+Switch(config-if)#exit
+Switch(config)#inter vlan 20
+Switch(config-if)#ip add 192.168.20.200 255.255.255.0
+Switch(config-if)#standby 2
+Switch(config-if)#standby 2 ip 192.168.20.254
+Switch(config-if)#standby 2 preempt 
+Switch(config-if)#exit
+Switch(config)#ip routing 
+
+
+
+2.Active&Standby IP 입력
+
+Active 장비
+Switch(config)#inter f0/2
+Switch(config-if)#ip add 10.10.10.1 255.255.255.0
+	
+Switch(config-if)#sw
+Switch(config-if)#no switchport 
+Switch(config-if)#ip add 10.10.10.1 255.255.255.0
+Switch(config-if)#no sh
+
+
+Standby 장비
+
+Switch(config)#inter f0/2
+Switch(config-if)#no sw
+Switch(config-if)#no switchport 
+Switch(config-if)#ip add 10.10.20.1 255.255.255.0
+Switch(config-if)#no shutdown
+Switch(config-if)#
+
+
+Router 0 
+Router>
+Router>en
+Router#config ter
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#inter f0/0
+Router(config-if)#ip ad 10.10.10.2 255.255.255.0
+Router(config-if)#no sh
+ex
+Router(config)#inter f0/1
+Router(config-if)#ip add 10.10.20.2 255.255.255.0
+Router(config-if)#no sh
+
+
+Router(config)#inter f1/0
+Router(config-if)#ip add 1.1.1.1 255.255.255.0
+Router(config-if)#no sh
+
+Router(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet1/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet1/0, changed state to up
+ex
+Router(config)#router ei 100
+Router(config-router)#net 10.10.10.0
+Router(config-router)#net 10.10.20.0
+Router(config-router)#net 1.1.1.0
+Router(config-router)#no au
+Router(config-router)#
+
+
+
+
+오른쪽 L3 스위치
+
+Switch>
+Switch>en
+Switch#config ter
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#inter f0/1
+Switch(config-if)#no sw
+Switch(config-if)#no switchport 
+Switch(config-if)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to up
+ip add 
+Switch(config-if)#ip add 1.1.1.2 255.255.255.0
+Switch(config-if)#no sh
+Switch(config-if)#
+Switch(config-if)#ex
+Switch(config)#ip routin
+Switch(config)#ip routing 
+Switch(config)#router ei 100
+Switch(config-router)#net 1.1.1.0
+Switch(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 100: Neighbor 1.1.1.1 (FastEthernet0/1) is up: new adjacency
+no au
+Switch(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 100: Neighbor 1.1.1.1 (FastEthernet0/1) resync: summary configured
+
+Active Sw
+
+Switch(config)#router ei 100
+Switch(config-router)#net
+Switch(config-router)#network 10.10.10.0
+Switch(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 100: Neighbor 10.10.10.2 (FastEthernet0/2) is up: new adjacency
+no au
+Switch(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 100: Neighbor 10.10.10.2 (FastEthernet0/2) resync: summary configured
+
+
+Standby Sw
+
+Switch(config)#router ei 100
+Switch(config-router)#net 10.10.20.0
+Switch(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 100: Neighbor 10.10.20.2 (FastEthernet0/2) is up: new adjacency
+no au
+Switch(config-router)#
+%DUAL-5-NBRCHANGE: IP-EIGRP 100: Neighbor 10.10.20.2 (FastEthernet0/2) resync: summary configured
+
+
+
+Active SW
+
+witch(config-router)#ex
+Switch(config)#ip nat
+Switch(config)#ip nat pool vlan10 10.10.10.10 10.10.10.10 netma
+Switch(config)#ip nat pool vlan10 10.10.10.10 10.10.10.10 netmask 255.255.255.0
+Switch(config)#acc
+Switch(config)#access-list per
+Switch(config)#access-list 10 permit
+Switch(config)#access-list 10 permit 192.168.10.0 0.0.0.255
+Switch(config)#ip nat ins
+Switch(config)#ip nat inside sou
+Switch(config)#ip nat inside source list
+Switch(config)#ip nat inside source list 10 pool
+Switch(config)#ip nat inside source list 10 pool vlan10 
+Switch(config)#inter vlan 10
+Switch(config-if)#ip nat
+Switch(config-if)#ip nat in
+Switch(config-if)#ip nat inside 
+Switch(config-if)#inter f0/2
+Switch(config-if)#ip nat out
+Switch(config-if)#ip nat outside 
+Switch(config-if)#
+
+witch(config)#ip nat pool vlan20 10.10.10.20 10.10.10.20 net
+Switch(config)#ip nat pool vlan20 10.10.10.20 10.10.10.20 netmask 255.255.255.0
+Switch(config)#acc
+Switch(config)#access-list 11 permit
+Switch(config)#access-list 11 permit 192.168.20.0 0.0.0.255
+Switch(config)#ip nat in
+Switch(config)#ip nat inside sou
+Switch(config)#ip nat inside source list
+Switch(config)#ip nat inside source list 11 pool
+Switch(config)#ip nat inside source list 11 pool vlan20 over
+Switch(config)#ip nat inside source list 11 pool vlan20 overload 
+Switch(config)#inter vlan 20
+Switch(config-if)#ip nat inside
+Switch(config-if)#

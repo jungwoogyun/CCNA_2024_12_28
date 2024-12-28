@@ -1,0 +1,74 @@
+-------------------------------
+dhcp v6 (stateful(추적가능) autoconfiguration)
+-------------------------------
+------
+Router
+------
+enable
+config ter
+ipv6 unicast-routing			// ipv6 unicast-routing 활성화
+ipv6 cef				// ipv6 cef 기능 활성화
+ipv6 local pool A 2002::/64 64	// prefix-delegation 에 사용할 Pool 설정 
+					// pool name : itbank
+					// NetworkID : 2002::/64
+					// InterfaceID : 64비트
+ipv6 dhcp pool A
+prefix-delegation pool A		// prefix-delegation 설정 
+					// 위임 라우터가 가용한 주소 풀(pool)에서 요구한
+					// 프리픽스를 할당해 주는 과정
+dns-server 1001::1
+exit
+inter f0/0
+ipv6 enable
+ipv6 address 2002::1/64
+ipv6 dhcp server A
+no sh
+
+------
+Client
+-------
+ip auto (GNS)
+-------------------------------
+ipv6 stateless(추적불가능) autoconfiguration
+-------------------------------
+Router 1841
+
+----
+Router(OK)
+-----
+enable
+config ter
+ipv6 unicast-routing
+int f0/0
+ipv6 enable
+ipv6 address autoconfig
+ipv6 address 1001::1/64 eui-64
+no sh
+exit
+exit
+
+----
+PC 
+----
+Autoconfig 모드 전환 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

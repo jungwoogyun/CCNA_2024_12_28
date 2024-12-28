@@ -1,0 +1,121 @@
+스위치 이중화 프로토콜(FHRP)
+1> HSRP (Hot Standby Router Protocol)
+Cisco 전용 이중화 프로토콜
+Fail-Over : 대체 시스템이 존재.
+Hello 주기 : 3초(Active 라우터는 3초 간 Hello 패킷 전송 : Keepalive Massege)
+└ Multicast : 224.0.0.2
+Dead 주기 : 10초(10초 동안 Hello 패킷을 못 받을 경우 Active로 전환)
+HSRPv2 가상 MAC : 0000.0c9f.f0xx(xx:GROUP 번호(16진수))
+HSRPv1 가상 MAC : 0000.0c07.acxx(xx:GROUP 번호(16진수))
+
+[MSW1] - Active Router (주 시스템)
+int vlan 10
+ip add 192.168.10.100 255.255.255.0
+standby 1 ip 192.168.10.254
+└ 그룹 번호 : 0 - 255
+standby 1 priority 105
+└ 기본 값 : 100
+standby 1 preempt 
+└ 5초 뒤에 뺏어온다. (delay minimum 5)
+standby 1 track fa0/2
+└ 포트 추적 priority 값에서 -10
+
+[MSW2] - Standby Router (대체 시스템)
+int vlan 10
+ip add 192.168.10.200 255.255.255.0
+standby 1 ip 192.168.10.254
+
+2> VRRP
+IEEE 표준 이중화 프로토콜
+Fail-Over : 대체 시스템이 존재.
+Hello 주기 : 1초
+└ Multicast : 224.0.0.18
+Dead 주기 : 4초
+가상 MAC 주소 : 0000.5e00.01xx(xx : GROUP ID)
+
+[ESW1] - Master
+vlan 10
+int vlan 10
+ip add 192.168.10.2 255.255.255.0
+vrrp 1 ip 192.168.10.254
+vrrp 1 priority 105
+vrrp 1 preempt delay minimum 5
+vrrp 1 track 2
+exit
+track 2 int fa1/3 line-protocol
+
+[ESW2] - Backup
+vlan 10
+int vlan 10
+ip add 192.168.10.3 255.255.255.0
+vrrp 1 ip 192.168.10.254
+
+# show vrrp brief
+
+
+이중화 게이트웨이 상태변화
+
+initial	: HSRP동작x, 설정변경,인터페이스 sh/no sh
+learn	: HSRP동작o, Hello(x) , VIP(x)
+listen	: Hello 수신(o) -> VIP(o), Active/Standby(x)
+speak	: Hello 송수신(o) -> VIP(o), Active/Standby(o)
+standby	: 동일 그룹내에 1개의 standby 존재
+Actice 	: 동일 그룹내에 1개의 active 존재
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

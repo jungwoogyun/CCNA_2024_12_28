@@ -1,0 +1,9 @@
+Router> 			- 사용자 모드(User Mode)
+Router> enable			- 특별 권한 모드(Privilieged Mode) 전환
+Router# 	
+Router# configure terminal	- 구성 모드(Configuration Mode) 전환
+Router(config)# 	
+Router(config)# interface ?/?	- Interface 설정 모드 전환
+
+Router(config-if)# ip address [Gateway IP Address] [Subnet Mask Address]	-IP/subnetmask 할당
+Router(config-if)# no shutdown	- 포트 활성화 
